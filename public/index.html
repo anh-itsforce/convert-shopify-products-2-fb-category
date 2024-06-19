@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Shopify to Facebook Converter</title>
+    <link rel="stylesheet" href="css/styles.css"> 
+</head>
+<body>
+    <div class="container">
+      <div class="wrapper">
+        <div class="form-container">
+          <h1>Upload Your Shopify product export CSV File</h1>
+          <form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
+              <div class="input-group">
+                <input type="file" name="csv">
+              </div>
+  
+              <div class="input-group input-group--2columns">
+                <label for="shopUrl">Shop URL:</label>
+                <input type="text" id="shopUrl" name="shopUrl" required><br><br>
+              </div>
+  
+              <div class="form-action">
+                <button class="button" type="submit">Upload</button>
+              </div>
+          </form>
+        </div>
+        
+  
+        <div id="downloadLinkContainer" style="display:none;"> 
+            <h2>Conversion Complete!</h2>
+            <a id="downloadLink" href="" download>Download Facebook Catalog</a> 
+        </div>
+      </div>
+    </div>
+    <script>
+        const form = document.getElementById('uploadForm');
+        const downloadLinkContainer = document.getElementById('downloadLinkContainer');
+        const downloadLink = document.getElementById('downloadLink');
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const formData = new FormData(form);
+
+            try {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                if (data.downloadLink) {
+                    downloadLink.href = data.downloadLink;
+                    downloadLinkContainer.style.display = 'block';
+                } else {
+                    alert('An error occurred during conversion.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            }
+        });
+    </script>
+</body>
+</html>
